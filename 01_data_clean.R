@@ -50,8 +50,8 @@ write.csv(adapt_gen, "adapt_general_clean.csv")
 # adapt_gen_nodup <- adapt_gen %>% group_by(Country, Indicator.name) %>% 
 #   summarise_all(list(~toString(unique(na.omit(.)))))
 
-
-
+adapt_gen$duplicate <- duplicated(adapt_gen$Indicator.ID)
+adapt_gen$dup_num <- ifelse(adapt_gen$duplicate == TRUE, 1, 0)
 
 #########  Adaptation Target Data ----------------------------------------------
 
@@ -63,8 +63,6 @@ adapt_tar$Value <- ifelse(adapt_tar$Value == "Not Available", NA,
                           adapt_tar$Value)
 adapt_tar <- adapt_tar %>% drop_na(Value)
 
-adapt_tar_nodup <- adapt_tar %>% group_by(Country, Indicator.ID) %>%
-  summarise_all(list(~toString(unique(na.omit(.)))))
 
 write.csv("adapt_tar", "adapt_targets.csv")
 
@@ -81,6 +79,17 @@ countries_finan <- unique(financial_targets$Country)
 
 write.csv(countries_finan, "countries_financial_targets.csv")
 
+
+# duplicates
+
+adapt_tar$duplicate <- duplicated(adapt_tar$Indicator.ID)
+adapt_tar$dup_num <- ifelse(adapt_tar$duplicate == TRUE, 1, 0)
+
+# collapsing -- no duplicates  --- after converting everything to numerical
+
+# adapt_tar_nodup <- adapt_tar %>% group_by(Country, Indicator.ID) %>%
+#   summarise_all(list(~toString(unique(na.omit(.)))))
+
 #########  Adaptation Vision Data ----------------------------------------------
 
 adapt_vis <- adapt_vision
@@ -96,3 +105,8 @@ adapt_vis$Value <- ifelse(grepl(paste(matches, collapse = "|"), adapt_vis$Value,
 adapt_vis$Value <- ifelse(grepl(paste(id, collapse = "|"), adapt_vis$Value,
                                 ignore.case = TRUE), 1, 
                           adapt_vis$Value)
+# duplicates 
+
+adapt_vis$duplicate <- duplicated(adapt_vis$Indicator.ID)
+adapt_vis$dup_num <- ifelse(adapt_vis$duplicate == TRUE, 1, 0)
+
