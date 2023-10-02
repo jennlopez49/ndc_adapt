@@ -39,11 +39,14 @@ nos <- nos %>% drop_na(ISO)
 
 adapt_gen$Value <- ifelse(adapt_gen$Value == "No", "0", adapt_gen$Value)
 
-
+write.csv(adapt_gen, "adapt_general_clean.csv")
 
 ### TO SWITCH TO WIDE FORM SO EACH COLUMN HAS ONLY INDICATOR FOR EACH COUNTRY
 ## switch AFTER finishing hand-coding the last of the string variables
+
+
 # # grouping by indicator name
+
 # adapt_gen_nodup <- adapt_gen %>% group_by(Country, Indicator.name) %>% 
 #   summarise_all(list(~toString(unique(na.omit(.)))))
 
@@ -63,6 +66,8 @@ adapt_tar <- adapt_tar %>% drop_na(Value)
 adapt_tar_nodup <- adapt_tar %>% group_by(Country, Indicator.ID) %>%
   summarise_all(list(~toString(unique(na.omit(.)))))
 
+write.csv("adapt_tar", "adapt_targets.csv")
+
 ## pulling out financial targets 
 
 financial_targets <- adapt_tar[grepl("USD", adapt_tar$Value),]
@@ -73,6 +78,8 @@ financial_targets <- financial_targets[!grepl("spent", financial_targets$Value),
 ### list of countries 
 
 countries_finan <- unique(financial_targets$Country)
+
+write.csv(countries_finan, "countries_financial_targets.csv")
 
 #########  Adaptation Vision Data ----------------------------------------------
 
