@@ -3,9 +3,10 @@ adapt_general <- read.csv("ndc_content-2/ndc_content.csv")
 adapt_targets <- read.csv("ndc_content-3/ndc_content.csv")
 adapt_vision <- read.csv("ndc_content-4/ndc_content.csv")
 
-
+adapt_general_view <- adapt_general[, -c(5,6)]
+adapt_targets_view <- adapt_general[, -c(5,6)]
 ######### General Adaptation Data ----------------------------------------------
-adapt_gen <- adapt_general
+adapt_gen <- adapt_general[!adapt_general$Source == "NDC Explorer",]
 # changing NAs to actual NAs 
 nas <- c("N/A", "Not Applicable", "Not related", "Not Related", "no new",
          "no document submitted")
@@ -40,6 +41,16 @@ nos <- nos %>% drop_na(ISO)
 adapt_gen$Value <- ifelse(adapt_gen$Value == "No", "0", adapt_gen$Value)
 
 write.csv(adapt_gen, "adapt_general_clean.csv")
+
+adapt_general_clean <- adapt_gen[, -c(5,6)]
+
+adapt_general_clean <- adapt_general[!duplicated(adapt_general),]
+
+# number of quotes left -- 
+
+adapt_gen_quotes <- adapt_gen[!adapt_gen$Value == 0,]
+adapt_gen_quotes <- adapt_gen_quotes[!adapt_gen_quotes$Value == 1,]
+adapt_gen_quotes <- adapt_gen_quotes[!is.na(adapt_gen_quotes$Value),]
 
 ### TO SWITCH TO WIDE FORM SO EACH COLUMN HAS ONLY INDICATOR FOR EACH COUNTRY
 ## switch AFTER finishing hand-coding the last of the string variables
@@ -109,4 +120,22 @@ adapt_vis$Value <- ifelse(grepl(paste(id, collapse = "|"), adapt_vis$Value,
 
 adapt_vis$duplicate <- duplicated(adapt_vis$Indicator.ID)
 adapt_vis$dup_num <- ifelse(adapt_vis$duplicate == TRUE, 1, 0)
+
+
+########## PULLING OUT INDICATORS FOR EACH DOC ---------------------------------
+
+ind_gen <- data.frame(adapt_gen$Indicator.ID, adapt_gen$Indicator.name, 
+                      adapt_gen$Source)
+ind_gen <- unique(ind_gen)
+write.csv(ind_gen, "ind_gen.csv")
+
+ind_tar <- data.frame(adapt_tar$Indicator.ID, adapt_tar$Indicator.name, 
+                      adapt_tar$Source)
+ind_tar <- unique(ind_tar)
+write.csv(ind_tar, "ind_tar.csv")
+
+ind_vis <- data.frame(adapt_vis$Indicator.ID, adapt_vis$Indicator.name,
+                      adapt_vis$Source)
+ind_vis <- unique(ind_vis)
+write.csv(ind_vis, "ind_vis.csv")
 
