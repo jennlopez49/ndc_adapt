@@ -13,3 +13,7 @@ adapt_gen_subset <- subset(adapt_gen,
 adapt_sub_quotes <- adapt_gen_subset[!adapt_gen_subset$Value == 0,]
 adapt_sub_quotes <- adapt_sub_quotes[!adapt_sub_quotes$Value == 1,]
 adapt_sub_quotes <- adapt_sub_quotes[!is.na(adapt_sub_quotes$Value),]
+
+##### CSV File
+
+write.csv(adapt_gen_subset, "adapt_gen_subset.csv")
