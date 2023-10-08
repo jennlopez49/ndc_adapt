@@ -6,8 +6,8 @@ categories_match <- c("Financial Needs", "Loss and Damage", "Vulnerability")
 
 ### Subsetting 
 
-adapt_gen_subset <- subset(adapt_gen, 
-                           subset = adapt_gen$Overview.category == categories_match)
+adapt_gen_subset <- subset(adapt_general, 
+                           subset = adapt_general$Overview.category == categories_match)
 
 ## quotes -- 206 left 
 adapt_sub_quotes <- adapt_gen_subset[!adapt_gen_subset$Value == 0,]
