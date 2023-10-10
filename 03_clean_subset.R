@@ -88,10 +88,11 @@ loss_wide <- loss_subset %>% pivot_wider(id_cols = Country,
                                            values_from = Value)
 
 ## Sums 
-loss_wide_sums <- loss_wide_cleaned%>% mutate(Loss_Counts = select(., 
-                        "Definition of loss and damage":"Use of climate change scenario") %>% 
+loss_wide_sums <- loss_wide %>% mutate(Loss_Counts = select(., 
+                        "Current economic loss and damage figures":"Use of climate change scenario") %>% 
                                                    rowSums(na.rm = TRUE))
-loss_wide_sums$Loss_Counts <- ifelse(is.na(loss_wide_sums$`Definition of loss and damage`) &
+loss_wide_sums$Loss_Counts <- ifelse(is.na(loss_wide_sums$`Current economic loss and damage figures`) &
+                                       is.na(loss_wide_sums$`Definition of loss and damage`) &
                                        is.na(loss_wide_sums$`Economic loss and damage`) & 
                                        is.na(loss_wide_sums$`Future economic loss and damage figures`) &
                                        is.na(loss_wide_sums$`Human mobility`) & 
