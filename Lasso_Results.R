@@ -31,14 +31,35 @@ merged$migration <- ifelse(merged$Human.mobility > 0, 1, 0)
 ## Getting rid of certain vars 
 merged_clean <- merged[, -c(8:13)]
 merged_clean <- subset(merged_clean, select = -c(X2nd_party, X3rd_party,
-                                  top_party, Country.y))
+                                  top_party, Country.y, ambition_dv))
 ### Variable Selection -----
-for_finan <- 
-reg_full <- lm(Financial.needs.for.implementation ~ . -country.code - Country.x, 
-               data = merged_clean)
-reg_null <- lm(Financial.needs.for.implementation ~ 1, data = merged)
+reg_data <- merged_clean[, -c(1:2)]
+reg_data <- subset(reg_data, select = -c(coal_elec_2015, oil_elec_2015,
+                                         renew_2015, hydro_2015, green_party_votes.y,
+                                         green_party_seats.y,
+                                         eff_num_parties_13,eff_num_parties_14,
+                                         eff_num_parties_15, eff_num_parties_16,
+                                         eff_num_parties_17, eff_num_parties_18,
+                                         eco.party.man, env.party.man, 
+                                         green_party_seats.x, const_hosterml,
+                                         WJP_Rule_of_Law_19, green_party_votes.x,
+                                         wjp_rule_18,govt_spend_18, 
+                                         govt_spend_19, green_party_dummy.x
+                                         ))
+reg_full <- lm(Financial.needs.for.implementation ~ .  -Other.non.financial.support.needs
+                - Finan_Needs 
+               - finan_needs_imp - Other_needs - party_pos_env
+               , 
+               data = reg_data)
+reg_null <- lm(Financial.needs.for.implementation ~ 1, data = merged_clean)
 
 step_out <- step(reg_null, 
                  scope = list(lower = reg_null, upper = reg_full),
                  method = "forward")
 summary(step_out)
+
+### Correlations for Financial Needs 
+cor_data <- reg_data[,c(80:118)]
+cor_data <- cor_data %>% na.omit()
+correlations <- cor(cor_data)
+### Lasso 
