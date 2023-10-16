@@ -1,4 +1,4 @@
-### loading previous vars 
+### loading previous vars ---------
 rep_data <- read.csv("~/Dropbox (jl0049a)/2022_joint_Research_Todd_Jennifer_Karl/political_constraints_ambition/updated_mitigation.csv")
 rep_data_cl <- rep_data[,-c(43:196)]
 rep_short <- rep_data_cl[, -c(3:4, 44:70, 74:100)]
@@ -6,7 +6,7 @@ full_data <- read.csv("full_data.csv")
 ### merged 
 merged <- merge(rep_short, full_data, by = "country.code")
 
-
+### Calculating/Creating New vars --------
 ### C02 & GHG Change 
 merged$co2_1990 <- as.numeric(merged$co2_1990)
 
@@ -26,3 +26,19 @@ merged$non_econ_loss <- ifelse(merged$Non.economic.loss.and.damage > 0, 1, 0)
 
 # Migration
 merged$migration <- ifelse(merged$Human.mobility > 0, 1, 0)
+
+
+## Getting rid of certain vars 
+merged_clean <- merged[, -c(8:13)]
+merged_clean <- subset(merged_clean, select = -c(X2nd_party, X3rd_party,
+                                  top_party, Country.y))
+### Variable Selection -----
+for_finan <- 
+reg_full <- lm(Financial.needs.for.implementation ~ . -country.code - Country.x, 
+               data = merged_clean)
+reg_null <- lm(Financial.needs.for.implementation ~ 1, data = merged)
+
+step_out <- step(reg_null, 
+                 scope = list(lower = reg_null, upper = reg_full),
+                 method = "forward")
+summary(step_out)
