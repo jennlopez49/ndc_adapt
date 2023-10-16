@@ -59,7 +59,9 @@ step_out <- step(reg_null,
 summary(step_out)
 
 ### Correlations for Financial Needs 
-cor_data <- reg_data[,c(80:118)]
-cor_data <- cor_data %>% na.omit()
-correlations <- cor(cor_data)
+cor_data <- reg_data[,c(80:117)]
+cor_data_sub <- cor_data[, c(12:38)]
+cor_data_new <- cor_data_sub %>% na.omit()
+correlations <- cor(cor_data_new)
+write.csv(correlations, "correlations_climatewatch.csv")
 ### Lasso 
