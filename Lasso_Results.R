@@ -42,7 +42,9 @@ countries <- merged_full %>% group_by(country.name) %>%
 merged_full %>% 
   summarise(across(everything(), ~ sum(is.na(.))))
 
+### saving 
 
+write.csv(merged_full, "merged_full.csv")
 ### Variable Selection -----
 reg_data_countries <- merged_full %>% filter(!(country.name %in% c("Taiwan", 
                                                                    "Venezuela", "Yemen",
@@ -55,15 +57,15 @@ reg_data <- reg_data_countries %>% select(!c(fuel.pct, prev.leader, reelect,
                                              Country.x,
                                              Country.y,
                                              Other.non.financial.support.needs,
+                                             Financial.needs.for.implementation,
                                              Finan_Needs,
-                                             finan_needs_imp,
                                              Other_needs,
                                              country.code,
                                              country.name))
 reg_data_no_nas <- na.omit(reg_data)
-reg_full <- lm(Financial.needs.for.implementation ~ ., 
+reg_full <- lm(finan_needs_imp ~ ., 
                data = reg_data_no_nas)
-reg_null <- lm(Financial.needs.for.implementation ~ 1, data = reg_data_no_nas)
+reg_null <- lm(finan_needs_imp ~ 1, data = reg_data_no_nas)
 
 step_out <- step(reg_null, 
                  scope = list(lower = reg_null, upper = reg_full),
@@ -79,10 +81,10 @@ write.csv(correlations, "correlations_climatewatch.csv")
 ### Lasso 
 
 
-reg <- lm(Financial.needs.for.implementation ~ ., data = reg_data_no_nas) 
+reg <- lm(finan_needs_imp ~ ., data = reg_data_no_nas) 
 x <- model.matrix(reg)
 dim(x)
-y <- reg_data_no_nas$Financial.needs.for.implementation
+y <- reg_data_no_nas$finan_needs_imp
 
 set.seed(123)
 lr_cv <- cv.glmnet(x, y)
@@ -103,29 +105,29 @@ reg_data_nonfin <- reg_data_countries %>% select(!c(fuel.pct, prev.leader, reele
                                              Financial.needs.for.implementation,
                                              Finan_Needs,
                                              finan_needs_imp,
-                                             Other_needs,
+                                             Other.non.financial.support.needs,
                                              country.code,
                                              country.name))
 reg_non_cl <- na.omit(reg_data_nonfin)
-reg_full_non <- lm( Other.non.financial.support.needs~ ., 
+reg_full_non <- lm(Other_needs ~ ., 
                data = reg_non_cl)
-reg_null_non <- lm(Other.non.financial.support.needs ~ 1, data = reg_non_cl)
+reg_null_non <- lm(Other_needs ~ 1, data = reg_non_cl)
 
-step_out_non <- step(reg_null, 
-                 scope = list(lower = reg_null, upper = reg_full),
+step_out_non <- step(reg_null_non, 
+                 scope = list(lower = reg_null_non, upper = reg_full_non),
                  method = "forward")
 summary(step_out_non)
 
 
 
-reg <- lm(Other.non.financial.support.needs ~ ., data = reg_non_cl) 
-x <- model.matrix(reg)
+reg_other <- lm(Other_needs ~ ., data = reg_non_cl) 
+x <- model.matrix(reg_other)
 dim(x)
-y <- reg_non_cl$Other.non.financial.support.needs
+y <- reg_non_cl$Other_needs
 
 set.seed(123)
-lr_cv <- cv.glmnet(x, y)
+lr_cv_o <- cv.glmnet(x, y)
 
-plot(lr_cv)
+plot(lr_cv_o)
 
-coef(lr_cv)
+coef(lr_cv_o)
