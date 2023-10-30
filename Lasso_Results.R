@@ -54,6 +54,8 @@ merged_2021 %>%
 ### saving 
 
 write.csv(merged_full, "merged_full.csv")
+
+write.csv(merged_2021, "merged_2021.csv")
 ### Variable Selection -----
 reg_data_countries <- merged_2021 %>% filter(!(country.name %in% c("Taiwan", 
                                                                    "Venezuela", "Yemen",
