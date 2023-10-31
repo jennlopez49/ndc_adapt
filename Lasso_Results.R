@@ -56,6 +56,9 @@ merged_2021 %>%
 write.csv(merged_full, "merged_full.csv")
 
 write.csv(merged_2021, "merged_2021.csv")
+
+## load 
+merged_2021 <- read.csv("merged_2021.csv")
 ### Variable Selection -----
 reg_data_countries <- merged_2021 %>% filter(!(country.name %in% c("Taiwan", 
                                                                    "Venezuela", "Yemen",
@@ -83,7 +86,8 @@ reg_data <- reg_data_countries %>% select(!c(fuel.pct, prev.leader, reelect,
                                              renewable.consumption,
                                              Finan_Needs,
                                              country.code,
-                                             country.name))
+                                             country.name, Country.y, Country.x,
+                                             Country))
 reg_data_no_nas <- na.omit(reg_data)
 reg_full <- lm(finan_needs_imp ~ ., 
                data = reg_data_no_nas)
@@ -139,7 +143,11 @@ reg_data_nonfin <- reg_data_countries %>% select(!c(fuel.pct, prev.leader, reele
                                              finan_needs_imp,
                                              Other.non.financial.support.needs,
                                              country.code,
-                                             country.name))
+                                             country.name,
+                                             Country.x, Country.y,
+                                             Country,
+                                             renewable.generation,
+                                             renewable.consumption))
 reg_non_cl <- na.omit(reg_data_nonfin)
 reg_full_non <- lm(Other_needs ~ ., 
                data = reg_non_cl)
@@ -162,4 +170,4 @@ lr_cv_o <- cv.glmnet(x, y)
 
 plot(lr_cv_o)
 
-coef(lr_cv_o)
+coef(lr_cv_o, s = "lambda.min")

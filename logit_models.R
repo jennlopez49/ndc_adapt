@@ -1,8 +1,8 @@
 ### LOGIT MODELS 
 
-merged_full <- read.csv("merged_full.csv")
+# merged_full <- read.csv("merged_2021.csv")
 
-reg_data_countries <- merged_full %>% filter(!(country.name %in% c("Taiwan", 
+reg_data_countries <- merged_2021 %>% filter(!(country.name %in% c("Taiwan", 
                                                                    "Venezuela", "Yemen",
                                                                    "South Sudan")))
 
@@ -19,35 +19,37 @@ reg_data <- reg_data_countries %>% select(!c(fuel.pct, prev.leader, reelect,
                                              country.name))
 ### DVs
 
-non_e_dvs <- c("Other_needs", "non_econ_loss")
-e_dvs <- c("finan_needs_imp","loss_damage")
+non_e_dvs <- c("Other_needs")
+e_dvs <- c("loss_damage")
 
 ## IVs 
 
 non_e_ivs <- list()
-non_e_ivs[[1]] <- c("eu","parliamentary", "polyarchym", "Slow.onset.events", 
-              "oil.rent", "gdp.p.capita", "pop")
-non_e_ivs[[2]] <- c("eu",  "parliamentary","polyarchym", "renewable.capacity", "Slow.onset.events",
-              "explicit.subsidy", "oil.rent", "gdp.p.capita", "pop")
-non_e_ivs[[3]] <- c("eu", "parliamentary","polyarchym", "renewable.capacity", "Slow.onset.events",
-              "Human.mobility", "oil.rent", "gdp.p.capita", "pop")
-non_e_ivs[[4]] <- c("eu","parliamentary","polyarchym", "renewable.capacity", "Slow.onset.events",
-              "Economic.loss.and.damage", "oil.rent", "gdp.p.capita", "pop")
-non_e_ivs[[5]] <- c("eu", "parliamentary","polyarchym", "renewable.capacity", "Slow.onset.events",
-             "migration", "oil.rent", "gdp.p.capita", "pop")
+non_e_ivs[[1]] <- c("renewable.capacity", "polyarchya", "Slow.onset.events", 
+              "oil.rent", "gdp")
+non_e_ivs[[2]] <- c("oil.rent","polyarchya", "Slow.onset.events",
+              "migration", "oil.rent", "gdp.p.capita")
+non_e_ivs[[3]] <- c("Risk.management.approaches ","polyarchya", 
+                    "renewable.capacity", 
+                    "Slow.onset.events", "Human.mobility", "non_econ_loss", 
+                    "gdp")
+# non_e_ivs[[4]] <- c("eu","parliamentary","polyarchym", "renewable.capacity", "Slow.onset.events",
+#               "Economic.loss.and.damage", "oil.rent", "gdp.p.capita", "pop")
+# non_e_ivs[[5]] <- c("eu", "parliamentary","polyarchym", "renewable.capacity", "Slow.onset.events",
+#              "migration", "oil.rent", "gdp.p.capita", "pop")
 
 e_ivs <- list()
 
-e_ivs[[1]] <- c("eu","parliamentary", "green_party", "non_econ_loss", "govt.spend", 
-                    "oil.rent", "gdp.p.capita", "pop")
-e_ivs[[2]] <- c("eu", "parliamentary","green_party", "non_econ_loss", "govt.spend",
-                    "explicit.subsidy", "oil.rent", "gdp.p.capita", "pop")
-e_ivs[[3]] <- c("eu", "parliamentary","green_party", "non_econ_loss", "govt.spend",
-                    "migration", "oil.rent", "gdp.p.capita", "pop")
-e_ivs[[4]] <- c("eu","parliamentary","green_party", "non_econ_loss", "govt.spend",
-                    "Human.mobility", "oil.rent", "gdp.p.capita", "pop")
-e_ivs[[5]] <- c("eu", "parliamentary","green_party", "non_econ_loss", "govt.spend",
-                    "turnover", "oil.rent", "gdp.p.capita", "pop")
+e_ivs[[1]] <- c("non_econ_loss", "govt.spend", 
+                    "oil.rent", "gdp.p.capita", "polyarchya")
+e_ivs[[2]] <- c("non_econ_loss", "govt.spend",
+                    "oil.rent", "gdp.p.capita", "Human.mobility")
+e_ivs[[3]] <- c("non_econ_loss", "govt.spend",
+                     "oil.rent", "gdp.p.capita", "migration", "renewable.capacity")
+# e_ivs[[4]] <- c("eu","parliamentary","green_party", "non_econ_loss", "govt.spend",
+#                     "Human.mobility", "oil.rent", "gdp.p.capita", "pop")
+# e_ivs[[5]] <- c("eu", "parliamentary","green_party", "non_econ_loss", "govt.spend",
+#                     "turnover", "oil.rent", "gdp.p.capita", "pop")
 
 ####### Financial Models
 
@@ -67,7 +69,7 @@ for (Y in e_dvs) {
 
 # Tables 
 stargazer(fin_mods1$finan_needs_imp, type = "text")
-stargazer(fin_mods1$loss_damage, type = "text")
+stargazer(fin_mods1$loss_damage, type = "text", out = "prelim_ld.html")
 
 
 ####### Non-Financial Models
@@ -87,5 +89,5 @@ for (Y in non_e_dvs) {
 
 
 # Tables 
-stargazer(non_fin_mods1$Other_needs, type = "text")
+stargazer(non_fin_mods1$Other_needs, type = "text", out = "prelim_other.html")
 stargazer(non_fin_mods1$non_econ_loss, type = "text")
