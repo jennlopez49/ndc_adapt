@@ -34,7 +34,15 @@ reg_data_ld <- reg_data_countries %>% select(!c(fuel.pct, prev.leader, reelect,
                                                 Loss.and.damage.mentioned,
                                                 Economic.loss.and.damage,
                                                 year,
-                                                country.name))
+                                                country.name,
+                                                Loss_Counts,
+                                                Vul_Counts))
+reg_data_ld <- reg_data %>% select(-c(X.1, Future.economic.loss.and.damage.figures,
+                                   Current.economic.loss.and.damage.figures,
+                                   Loss.and.damage.mentioned,
+                                   Loss_Counts,
+                                   Vul_Counts,
+                                   Economic.loss.and.damage))
 
 reg_loss <- na.omit(reg_data_ld)
 reg_full_loss <- lm(loss_damage ~ ., 
@@ -58,7 +66,7 @@ lr_cv_l <- cv.glmnet(x, y)
 
 plot(lr_cv_l)
 
-coef(lr_cv_l)
+coef(lr_cv_l, s = "lambda.min")
 
 ## NON ECON LOSS -- BINARY ----------
 
