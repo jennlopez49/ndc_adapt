@@ -17,3 +17,16 @@ full_data_dates <- full_data_dates %>% mutate(
 
 ### by year 
 table(full_data_dates$year)
+
+
+### adding in G20, Income-Status, OECD, etc
+ndc_exp <- readxl::read_excel("adpatation_ndc_data.xlsx")
+
+ndc_col <- ndc_exp[,c(2,114:119)]
+
+
+## merging 
+
+cleaned_full <- merge(full_data_dates, ndc_col, by = "country.code")
+
+write.csv(cleaned_full, "cleaned_full.csv")
