@@ -130,3 +130,72 @@ index_vul <- full_data %>% ggplot(aes(Vul_Counts, fill = "black")) +
 
 index_vul + theme(legend.position = "none") + labs(x = "Mentions Vulnerable Group",
                                                    y = "Number of NDCs")
+
+
+
+#### non-Econ Loss vs Econ Loss for 2021 
+
+color <- c(rep("red", 1.0), rep("black", 0.0))
+
+p1 <- full_2021_complete %>% ggplot(aes(loss_damage,
+                                        fill = factor(loss_damage))) + 
+  geom_histogram(bins = 3, show.legend = F) + 
+  labs(x = "Economic Loss and Damage Mentioned", y = "Count")
+
+p2 <- full_2021_complete %>% ggplot(aes(non_econ_loss_damage,
+                                        fill = factor(non_econ_loss_damage))) + 
+  geom_histogram(bins = 3) + 
+  labs(x = "Non-economic Loss and Damage Mentioned", y = NULL)  + 
+  scale_fill_discrete(name = "Mention Binary Indicator")
+
+p1 + p2
+
+
+## Financial mentions by income 
+
+p.1 <- full_2021_complete %>% ggplot(aes(finan_needs_bin,
+                                  fill = factor(income_details))) + 
+  geom_histogram(bins = 3) + labs(x = NULL, y = "Count")  + 
+  scale_fill_discrete(name = "Income Classification")
+
+p.2 <- full_2021_complete %>% ggplot(aes(finan_needs_bin,
+                                  fill = factor(region_name))) + 
+  geom_histogram(bins = 3) + labs(x = NULL, y = NULL) + 
+  scale_fill_discrete(name = "Region")
+
+
+both <- p.1 + p.2 
+
+wrap_elements(panel = both) +
+  labs(tag = "Financial Needs Mentioned") +
+  theme(
+    plot.tag = element_text(size = rel(1)),
+    plot.tag.position = "bottom"
+  )
+
+
+### Full dataset for comparison 
+cleaned_full$financial_bin <- ifelse(cleaned_full$Financial.needs.for.implementation > 0, 1, 0)
+p.1_full <- cleaned_full %>% ggplot(aes(financial_bin,
+                                         fill = factor(income_details))) + 
+  geom_histogram(bins = 3) + labs(x = NULL, y = "Count") + 
+  scale_fill_discrete(name = "Income Classification")
+
+p.2_full <- cleaned_full %>% ggplot(aes(financial_bin,
+                                         fill = factor(region_name))) + 
+  geom_histogram(bins = 3) + labs(x = NULL, y = NULL) + 
+  scale_fill_discrete(name = "Region")
+
+
+both_full <- p.1_full + p.2_full
+
+wrap_elements(panel = both_full) +
+  labs(tag = "Financial Needs Mentioned, Full Dataset") +
+  theme(
+    plot.tag = element_text(size = rel(1)),
+    plot.tag.position = "bottom"
+  )
+
+adapt <- read.csv("adapt_general_clean.csv") 
+adapt <- adapt[,-c(6,7)]
+
